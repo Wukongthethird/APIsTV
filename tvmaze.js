@@ -8,11 +8,10 @@ const TV_MAZE_URL = "http://api.tvmaze.com/"
 //const EPISODE use the single show search and ebedd episodes to get a list of the episodes on the URL 
 
 
-/** Given a search term, search for tv shows that match that query.
- *
- *  Returns (promise) array of show objects: [show, show, ...].
- *    Each show object should contain exactly: {id, name, summary, image}
- *    (if no image URL given by API, put in a default image URL)
+/** getShowsByTerm
+ * async function that takes in a search term and returns an array of objects containing relevant show data
+ *  @param {String} term --- search term for the query string
+ *  @returns {array | object} --- returns an array of objects containing relevant show data
  */
 
 
@@ -23,26 +22,18 @@ async function getShowsByTerm( term ) {
   
   // send a request to retrieve term's and episode 
   let showsData  =  await axios.get(  TV_MAZE_URL + multipleSearch  , {params: {q:term , embed:"episodes" }})  
-
-  // let showDataInfo = [   {
-  //     id: showData.data.id ,
-  //     name: showData.data.name,
-  //     summary: showData.data.summary,
-  //     image: showData.data.image
-  // } ] 
   
+  // return an array of show objects with required data
+  return showsData.data.map(showData =>{
+    //let image = showData.show.image.medium === null ? "https://tinyurl.com/tv-missing" : showData.show.image.medium;
 
-  console.log( showsData.data.map( (info)  => {  return 
-   
-    {
-      id: info.id 
-      // name: info.name,
-      summary: info.summary,
-      image: info.image
+    return {
+      id : showData.show.id, 
+      name : showData.show.name,
+      summary : showData.show.summary,
+      image:'https://tinyurl.com/tv-missing'
     }
-    
-  }))
-
+  });
 }
 
 
@@ -50,14 +41,19 @@ async function getShowsByTerm( term ) {
 
 function populateShows(shows) {
   $showsList.empty();
-
+  // let missingImgLink = "https://tinyurl.com/tv-missing";
+  
   for (let show of shows) {
+    // handle missing image
+    // if(!show.image){
+    //   show.image = missingImgLink;
+    // }
     const $show = $(
         `<div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img 
-              src="http://static.tvmaze.com/uploads/images/medium_portrait/160/401704.jpg" 
-              alt="Bletchly Circle San Francisco" 
+              src=${show.image} 
+              alt=${show.name} 
               class="w-25 mr-3">
            <div class="media-body">
              <h5 class="text-primary">${show.name}</h5>
@@ -76,6 +72,7 @@ function populateShows(shows) {
 
 /** Handle search form submission: get shows from API and display.
  *    Hide episodes area (that only gets shown if they ask for episodes)
+ * 
  */
 
 async function searchForShowAndDisplay() {
