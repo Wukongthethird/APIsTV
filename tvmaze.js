@@ -4,6 +4,9 @@ const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
 
+const TV_MAZE_URL = "http://api.tvmaze.com/"
+//const EPISODE use the single show search and ebedd episodes to get a list of the episodes on the URL 
+
 
 /** Given a search term, search for tv shows that match that query.
  *
@@ -12,27 +15,34 @@ const $searchForm = $("#searchForm");
  *    (if no image URL given by API, put in a default image URL)
  */
 
-async function getShowsByTerm( /* term */) {
-  // ADD: Remove placeholder & make request to TVMaze search shows API.
 
-  return [
+async function getShowsByTerm( term ) {
+  // ADD: Remove placeholder & make request to TVMaze search shows API.
+  let singleSearch = "singlesearch/shows?"
+  let multipleSearch= "search/shows?"
+  
+  // send a request to retrieve term's and episode 
+  let showsData  =  await axios.get(  TV_MAZE_URL + multipleSearch  , {params: {q:term , embed:"episodes" }})  
+
+  // let showDataInfo = [   {
+  //     id: showData.data.id ,
+  //     name: showData.data.name,
+  //     summary: showData.data.summary,
+  //     image: showData.data.image
+  // } ] 
+  
+
+  console.log( showsData.data.map( (info)  => {  return 
+   
     {
-      id: 1767,
-      name: "The Bletchley Circle",
-      summary:
-        `<p><b>The Bletchley Circle</b> follows the journey of four ordinary 
-           women with extraordinary skills that helped to end World War II.</p>
-         <p>Set in 1952, Susan, Millie, Lucy and Jean have returned to their 
-           normal lives, modestly setting aside the part they played in 
-           producing crucial intelligence, which helped the Allies to victory 
-           and shortened the war. When Susan discovers a hidden code behind an
-           unsolved murder she is met by skepticism from the police. She 
-           quickly realises she can only begin to crack the murders and bring
-           the culprit to justice with her former friends.</p>`,
-      image:
-          "http://static.tvmaze.com/uploads/images/medium_portrait/147/369403.jpg"
+      id: info.id 
+      // name: info.name,
+      summary: info.summary,
+      image: info.image
     }
-  ]
+    
+  }))
+
 }
 
 
