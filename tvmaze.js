@@ -125,22 +125,38 @@ async function getEpisodesOfShow(id) {
  */ 
 
 function populateEpisodes(episodes) { 
-
-  // find the episodeList element in DOM
   const $episodesList = $("#episodesList");
+  $episodesList.empty();
+  // find the episodeList element in DOM
+
 
   // create a list JQuery list element and fill it with <li> name, (season, number))
 
   episodes.forEach( episode => {
-    let $li = $('<li>')
-        .html(`${episode.name}, (${episode.season}, ${episode.number})`)
-        .css({"list-style-type":"none"});
+    let $li = $(`<li> ${episode.name} (${episode.season}, ${episode.number}) </li>`);
     $episodesList.append($li);
-    
   });
+
+  $episodesArea.show()
+}
+
+//controller + event handler
+
+
+async function displayEpisodesList(){
+  const $showID = $("#showsList").find("div").attr("data-show-id")
+  console.log($showID)
+  const episodeInformation = await getEpisodesOfShow($showID)
+
+  $episodesArea.css( {"display":""} )
+  populateEpisodes(episodeInformation)
 
 }
 
-// controller + event handler
+$(".Show-getEpisodes").on("click", async function (evt) {
+  evt.preventDefault();
 
-//$showID = $("#showsList").find("div").attr("data-show-id")
+  await displayEpisodesList();
+
+})
+$showID = $("#showsList").find("div").attr("data-show-id")
