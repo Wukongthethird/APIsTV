@@ -101,19 +101,6 @@ async function getEpisodesOfShow(id) {
 
   let episodeURL = TV_MAZE_URL+ `shows/${id}/episodes`
   let showsData  =  (await axios.get(  episodeURL )).data
-  console.log( showsData ) 
-
-  let retArr =[]
-  // for( let i=0 ; i<showsData.length; i++){
-  //   retArr.push({
-  //     id: showsData[i].id,
-  //     name: showsData[i].name,
-  //     season: showsData[i].season,
-  //     number:showsData[i].number
-  //   })
-  // }
-
-  // return retArr
   
   return showsData.map( episode => {
 
@@ -129,13 +116,28 @@ async function getEpisodesOfShow(id) {
 
 }
 
-/** Write a clear docstring for this function... */
-// array
+/** populateEpisodes
+ * Description: Given the episodes param, the function will populate the DOM in the episodesList
+ *              section with the episode season, number, name and id,
+ * 
+ * @param {array} episodes ---- array of objects containing episode id, name, season and number
+ * [{id, name, season, number}...] 
+ */ 
 
 function populateEpisodes(episodes) { 
-  $episodesList = $("#episodesList")
 
+  // find the episodeList element in DOM
+  const $episodesList = $("#episodesList");
 
+  // create a list JQuery list element and fill it with <li> name, (season, number))
+
+  episodes.forEach( episode => {
+    let $li = $('<li>')
+        .html(`${episode.name}, (${episode.season}, ${episode.number})`)
+        .css({"list-style-type":"none"});
+    $episodesList.append($li);
+    
+  });
 
 }
 
